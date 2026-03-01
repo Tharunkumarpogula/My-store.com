@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details - ModernShop</title>
+    <meta name="description"
+        content="View product details, specifications, and reviews. Shop now with secure payment and fast delivery.">
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Header/Navigation -->
+    <header class="header">
+        <div class="container">
+            <div class="nav-container">
+                <div class="logo">
+                    <h2>Modern<span>Shop</span></h2>
+                </div>
+
+                <nav class="nav-menu">
+                    <ul>
+                        <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+                        <li><a href="shop.html" class="active"><i class="fas fa-shopping-bag"></i> Shop</a></li>
+                        <li><a href="#"><i class="fas fa-tags"></i> Categories</a></li>
+                        <li><a href="about.html"><i class="fas fa-info-circle"></i> About Us</a></li>
+                        <li><a href="contact.html"><i class="fas fa-phone"></i> Contact</a></li>
+                    </ul>
+                </nav>
+
+                <div class="nav-right">
+                    <div class="cart-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count">0</span>
+                    </div>
+                    <button class="btn btn-secondary" onclick="logout()" id="logout-btn"
+                        style="display: none;">Logout</button>
+                    <div class="menu-toggle">
+                        <i class="fas fa-bars"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Product Banner -->
+    <section class="page-banner">
+        <div class="container">
+            <h1>Product Details</h1>
+            <p>View detailed information about our premium products</p>
+        </div>
+    </section>
+
+    <!-- Product Detail -->
+    <section class="product-detail">
+        <div class="container">
+            <div class="product-detail-container">
+                <div class="product-images">
+                    <div class="main-image">
+                        <img id="main-product-image" src="images/headphones.jpg" alt="Product Image">
+                    </div>
+                    <div class="thumbnail-images">
+                        <img src="images/headphones.jpg" alt="Thumbnail 1" class="thumbnail active">
+                        <img src="images/headphones.jpg" alt="Thumbnail 2" class="thumbnail">
+                        <img src="images/headphones.jpg" alt="Thumbnail 3" class="thumbnail">
+                        <img src="images/headphones.jpg" alt="Thumbnail 4" class="thumbnail">
+                    </div>
+                </div>
+
+                <div class="product-info">
+                    <h1 id="product-name">Premium Wireless Headphones</h1>
+                    <div class="rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                        <span>(4.5/5 - 128 reviews)</span>
+                    </div>
+
+                    <div class="price-section">
+                        <span class="current-price" id="product-price">₹ 2,999</span>
+                        <span class="original-price" id="product-original-price">₹ 3,999</span>
+                        <span class="discount" id="product-discount">25% OFF</span>
+                    </div>
+
+                    <div class="product-description">
+                        <h3>Description</h3>
+                        <p id="product-description">Experience crystal-clear sound with our premium wireless headphones.
+                            Featuring noise cancellation technology, 30-hour battery life, and comfortable over-ear
+                            design for extended listening sessions.</p>
+                    </div>
+
+                    <div class="product-specifications">
+                        <h3>Specifications</h3>
+                        <ul>
+                            <li>Driver Size: 40mm</li>
+                            <li>Battery Life: Up to 30 hours</li>
+                            <li>Connectivity: Bluetooth 5.0</li>
+                            <li>Noise Cancellation: Active Noise Cancellation</li>
+                            <li>Weight: 250g</li>
+                        </ul>
+                    </div>
+
+                    <div class="product-actions">
+                        <div class="quantity-selector">
+                            <label for="quantity">Quantity:</label>
+                            <div class="quantity-controls">
+                                <button class="qty-btn minus" onclick="changeQuantity(-1)">-</button>
+                                <input type="number" id="quantity" min="1" max="10" value="1">
+                                <button class="qty-btn plus" onclick="changeQuantity(1)">+</button>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary add-to-cart" onclick="addToCart()">Add to Cart</button>
+                        <button class="btn btn-secondary buy-now">Buy Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reviews Section -->
+    <section class="reviews-section">
+        <div class="container">
+            <h2>Customer Reviews</h2>
+            <div class="reviews-container">
+                <div class="review">
+                    <div class="review-header">
+                        <div class="rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <h4>Excellent Sound Quality</h4>
+                    </div>
+                    <p class="review-text">"These headphones exceeded my expectations. The sound quality is amazing and
+                        the battery lasts for days!"</p>
+                    <p class="review-author">- Rajesh Kumar</p>
+                </div>
+
+                <div class="review">
+                    <div class="review-header">
+                        <div class="rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <h4>Comfortable for Long Hours</h4>
+                    </div>
+                    <p class="review-text">"Very comfortable to wear for long periods. The noise cancellation works
+                        perfectly."</p>
+                    <p class="review-author">- Priya Sharma</p>
+                </div>
+            </div>
+
+            <div class="add-review">
+                <h3>Write a Review</h3>
+                <form class="review-form">
+                    <div class="form-group">
+                        <label for="review-rating">Rating:</label>
+                        <select id="review-rating" required>
+                            <option value="">Select Rating</option>
+                            <option value="5">★★★★★ (5 stars)</option>
+                            <option value="4">★★★★☆ (4 stars)</option>
+                            <option value="3">★★★☆☆ (3 stars)</option>
+                            <option value="2">★★☆☆☆ (2 stars)</option>
+                            <option value="1">★☆☆☆☆ (1 star)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="review-text">Review:</label>
+                        <textarea id="review-text" rows="4" placeholder="Share your experience with this product..."
+                            required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit Review</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>ModernShop</h3>
+                    <p>Your trusted partner for premium products and excellent service across India.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="shop.html">Shop</a></li>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Customer Service</h4>
+                    <ul>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Shipping Policy</a></li>
+                        <li><a href="#">Return Policy</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact Info</h4>
+                    <p><i class="fas fa-map-marker-alt"></i> Mumbai, India</p>
+                    <p><i class="fas fa-phone"></i> +91 9876543210</p>
+                    <p><i class="fas fa-envelope"></i> info@modernshop.in</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 ModernShop. All rights reserved. | Made with ❤️ for Indian customers</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        // Quantity control
+        function changeQuantity(change) {
+            const quantityInput = document.getElementById('quantity');
+            let currentValue = parseInt(quantityInput.value);
+            let newValue = currentValue + change;
+
+            if (newValue >= 1 && newValue <= 10) {
+                quantityInput.value = newValue;
+            }
+        }
+
+        // Thumbnail selection
+        document.querySelectorAll('.thumbnail').forEach(thumb => {
+            thumb.addEventListener('click', () => {
+                document.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
+                thumb.classList.add('active');
+                document.getElementById('main-product-image').src = thumb.src;
+            });
+        });
+    </script>
+</body>
+
+</html>

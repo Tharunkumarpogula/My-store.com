@@ -1,0 +1,17 @@
+{
+  "name": "modernshop-ecommerce",
+  "version": "1.0.0",
+  "description": "A complete responsive e-commerce website for Indian customers",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve .",
+    "dev": "npx live-server --port=3000"
+  },
+  "keywords": ["ecommerce", "responsive", "indian", "shopping"],
+  "author": "ModernShop",
+  "license": "MIT",
+  "devDependencies": {
+    "serve": "^14.2.0",
+    "live-server": "^1.2.2"
+  }
+}

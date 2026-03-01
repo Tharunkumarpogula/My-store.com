@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - ModernShop</title>
+    <meta name="description" content="Complete your purchase securely. Fast delivery and easy payment options available.">
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header/Navigation -->
+    <header class="header">
+        <div class="container">
+            <div class="nav-container">
+                <div class="logo">
+                    <h2>Modern<span>Shop</span></h2>
+                </div>
+                
+                <nav class="nav-menu">
+                    <ul>
+                        <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+                        <li><a href="shop.html"><i class="fas fa-shopping-bag"></i> Shop</a></li>
+                        <li><a href="#"><i class="fas fa-tags"></i> Categories</a></li>
+                        <li><a href="about.html"><i class="fas fa-info-circle"></i> About Us</a></li>
+                        <li><a href="contact.html"><i class="fas fa-phone"></i> Contact</a></li>
+                    </ul>
+                </nav>
+                
+                <div class="nav-right">
+                    <div class="cart-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count">0</span>
+                    </div>
+                    <button class="btn btn-secondary" onclick="logout()" id="logout-btn" style="display: none;">Logout</button>
+                    <div class="menu-toggle">
+                        <i class="fas fa-bars"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Checkout Banner -->
+    <section class="page-banner">
+        <div class="container">
+            <h1>Checkout</h1>
+            <p>Complete your purchase securely</p>
+        </div>
+    </section>
+
+    <!-- Checkout Form -->
+    <section class="checkout-section">
+        <div class="container">
+            <div class="checkout-container">
+                <div class="checkout-form">
+                    <h2>Billing Information</h2>
+                    <form id="billing-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="first-name">First Name *</label>
+                                <input type="text" id="first-name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="last-name">Last Name *</label>
+                                <input type="text" id="last-name" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Email Address *</label>
+                            <input type="email" id="email" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="phone">Phone Number *</label>
+                            <input type="tel" id="phone" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="address">Address *</label>
+                            <input type="text" id="address" placeholder="Street address" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="address2">Address 2 (Optional)</label>
+                            <input type="text" id="address2" placeholder="Apartment, suite, etc. (optional)">
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="city">City *</label>
+                                <input type="text" id="city" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="state">State *</label>
+                                <select id="state" required>
+                                    <option value="">Select State</option>
+                                    <option value="mh">Maharashtra</option>
+                                    <option value="up">Uttar Pradesh</option>
+                                    <option value="dl">Delhi</option>
+                                    <option value="tn">Tamil Nadu</option>
+                                    <option value="ka">Karnataka</option>
+                                    <option value="gj">Gujarat</option>
+                                    <option value="ap">Andhra Pradesh</option>
+                                    <option value="rj">Rajasthan</option>
+                                    <option value="tg">Telangana</option>
+                                    <option value="hr">Haryana</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="zip">ZIP Code *</label>
+                                <input type="text" id="zip" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="same-shipping">
+                                <label for="same-shipping">Same as billing address</label>
+                            </div>
+                        </div>
+                    </form>
+                    
+                    <!-- Shipping Address (if different) -->
+                    <div id="shipping-address" style="display: none;">
+                        <h2>Shipping Information</h2>
+                        <form id="shipping-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="ship-first-name">First Name *</label>
+                                    <input type="text" id="ship-first-name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="ship-last-name">Last Name *</label>
+                                    <input type="text" id="ship-last-name" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="ship-address">Address *</label>
+                                <input type="text" id="ship-address" placeholder="Street address" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="ship-address2">Address 2 (Optional)</label>
+                                <input type="text" id="ship-address2" placeholder="Apartment, suite, etc. (optional)">
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="ship-city">City *</label>
+                                    <input type="text" id="ship-city" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="ship-state">State *</label>
+                                    <select id="ship-state" required>
+                                        <option value="">Select State</option>
+                                        <option value="mh">Maharashtra</option>
+                                        <option value="up">Uttar Pradesh</option>
+                                        <option value="dl">Delhi</option>
+                                        <option value="tn">Tamil Nadu</option>
+                                        <option value="ka">Karnataka</option>
+                                        <option value="gj">Gujarat</option>
+                                        <option value="ap">Andhra Pradesh</option>
+                                        <option value="rj">Rajasthan</option>
+                                        <option value="tg">Telangana</option>
+                                        <option value="hr">Haryana</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="ship-zip">ZIP Code *</label>
+                                    <input type="text" id="ship-zip" required>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="order-summary">
+                    <h2>Order Summary</h2>
+                    <div class="summary-items" id="summary-items">
+                        <!-- Order items will be loaded dynamically -->
+                    </div>
+                    
+                    <div class="summary-totals">
+                        <div class="summary-item">
+                            <span>Subtotal</span>
+                            <span id="summary-subtotal">₹ 0.00</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Shipping</span>
+                            <span id="summary-shipping">₹ 0.00</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>GST (18%)</span>
+                            <span id="summary-gst">₹ 0.00</span>
+                        </div>
+                        <div class="summary-divider"></div>
+                        <div class="summary-total">
+                            <span>Total</span>
+                            <span id="summary-total">₹ 0.00</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Payment Methods -->
+                    <div class="payment-methods">
+                        <h3>Payment Method</h3>
+                        <div class="payment-option">
+                            <input type="radio" id="cod" name="payment" value="cod" checked>
+                            <label for="cod">Cash on Delivery (COD)</label>
+                        </div>
+                        <div class="payment-option">
+                            <input type="radio" id="razorpay" name="payment" value="razorpay">
+                            <label for="razorpay">Pay with Razorpay (Coming Soon)</label>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-primary place-order-btn" onclick="placeOrder()">Place Order</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>ModernShop</h3>
+                    <p>Your trusted partner for premium products and excellent service across India.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="shop.html">Shop</a></li>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Customer Service</h4>
+                    <ul>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Shipping Policy</a></li>
+                        <li><a href="#">Return Policy</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact Info</h4>
+                    <p><i class="fas fa-map-marker-alt"></i> Mumbai, India</p>
+                    <p><i class="fas fa-phone"></i> +91 9876543210</p>
+                    <p><i class="fas fa-envelope"></i> info@modernshop.in</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 ModernShop. All rights reserved. | Made with ❤️ for Indian customers</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        // Toggle shipping address form
+        document.getElementById('same-shipping').addEventListener('change', function() {
+            const shippingSection = document.getElementById('shipping-address');
+            shippingSection.style.display = this.checked ? 'none' : 'block';
+        });
+        
+        function placeOrder() {
+            alert('Order placed successfully! Thank you for shopping with us.');
+            // Clear cart after order placement
+            localStorage.removeItem('cart');
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>
