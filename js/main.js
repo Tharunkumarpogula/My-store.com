@@ -170,11 +170,11 @@ function loadFeaturedProducts() {
 
     featuredContainer.innerHTML = featuredProducts.map(product => `
         <div class="product-card">
-            <div class="product-image">
+            <div class="product-image" onclick="window.location.href='product.html?id=${product.id}'" style="cursor: pointer;">
                 <img src="${product.image}" alt="${product.name}">
             </div>
             <div class="product-info">
-                <h3 class="product-title">${product.name}</h3>
+                <h3 class="product-title" onclick="window.location.href='product.html?id=${product.id}'" style="cursor: pointer;">${product.name}</h3>
                 <div class="rating">
                     ${generateStars(product.rating)}
                     <span>(${product.rating}/5)</span>
@@ -183,8 +183,10 @@ function loadFeaturedProducts() {
                     ₹ ${product.price.toLocaleString('en-IN')}
                     <span class="original-price">₹ ${product.originalPrice.toLocaleString('en-IN')}</span>
                 </div>
-                <button class="add-to-cart" onclick="addToCart(${product.id})">Add to Cart</button>
-                <button class="buy-now-btn" onclick="buyNow(${product.id})">Buy Now</button>
+                <div class="product-actions-btn">
+                    <button class="add-to-cart" onclick="addToCart('${product.id}')">Add to Cart</button>
+                    <button class="buy-now-btn" onclick="buyNow('${product.id}')">Buy Now</button>
+                </div>
             </div>
         </div>
     `).join('');
@@ -196,11 +198,11 @@ function loadAllProducts() {
 
     productsGrid.innerHTML = products.map(product => `
         <div class="product-card">
-            <div class="product-image">
+            <div class="product-image" onclick="window.location.href='product.html?id=${product.id}'" style="cursor: pointer;">
                 <img src="${product.image}" alt="${product.name}">
             </div>
             <div class="product-info">
-                <h3 class="product-title">${product.name}</h3>
+                <h3 class="product-title" onclick="window.location.href='product.html?id=${product.id}'" style="cursor: pointer;">${product.name}</h3>
                 <div class="rating">
                     ${generateStars(product.rating)}
                     <span>(${product.rating}/5)</span>
@@ -209,8 +211,10 @@ function loadAllProducts() {
                     ₹ ${product.price.toLocaleString('en-IN')}
                     <span class="original-price">₹ ${product.originalPrice.toLocaleString('en-IN')}</span>
                 </div>
-                <button class="add-to-cart" onclick="addToCart(${product.id})">Add to Cart</button>
-                <button class="buy-now-btn" onclick="buyNow(${product.id})">Buy Now</button>
+                <div class="product-actions-btn">
+                    <button class="add-to-cart" onclick="addToCart('${product.id}')">Add to Cart</button>
+                    <button class="buy-now-btn" onclick="buyNow('${product.id}')">Buy Now</button>
+                </div>
             </div>
         </div>
     `).join('');
@@ -233,11 +237,11 @@ function filterProducts() {
 
     productsGrid.innerHTML = filteredProducts.map(product => `
         <div class="product-card">
-            <div class="product-image">
+            <div class="product-image" onclick="window.location.href='product.html?id=${product.id}'" style="cursor: pointer;">
                 <img src="${product.image}" alt="${product.name}">
             </div>
             <div class="product-info">
-                <h3 class="product-title">${product.name}</h3>
+                <h3 class="product-title" onclick="window.location.href='product.html?id=${product.id}'" style="cursor: pointer;">${product.name}</h3>
                 <div class="rating">
                     ${generateStars(product.rating)}
                     <span>(${product.rating}/5)</span>
@@ -246,7 +250,10 @@ function filterProducts() {
                     ₹ ${product.price.toLocaleString('en-IN')}
                     <span class="original-price">₹ ${product.originalPrice.toLocaleString('en-IN')}</span>
                 </div>
-                <button class="add-to-cart" onclick="addToCart(${product.id})">Add to Cart</button>
+                <div class="product-actions-btn">
+                    <button class="add-to-cart" onclick="addToCart('${product.id}')">Add to Cart</button>
+                    <button class="buy-now-btn" onclick="buyNow('${product.id}')">Buy Now</button>
+                </div>
             </div>
         </div>
     `).join('');
@@ -288,11 +295,11 @@ function sortProducts() {
 
     productsGrid.innerHTML = sortedProducts.map(product => `
         <div class="product-card">
-            <div class="product-image">
+            <div class="product-image" onclick="window.location.href='product.html?id=${product.id}'" style="cursor: pointer;">
                 <img src="${product.image}" alt="${product.name}">
             </div>
             <div class="product-info">
-                <h3 class="product-title">${product.name}</h3>
+                <h3 class="product-title" onclick="window.location.href='product.html?id=${product.id}'" style="cursor: pointer;">${product.name}</h3>
                 <div class="rating">
                     ${generateStars(product.rating)}
                     <span>(${product.rating}/5)</span>
@@ -301,7 +308,10 @@ function sortProducts() {
                     ₹ ${product.price.toLocaleString('en-IN')}
                     <span class="original-price">₹ ${product.originalPrice.toLocaleString('en-IN')}</span>
                 </div>
-                <button class="add-to-cart" onclick="addToCart(${product.id})">Add to Cart</button>
+                <div class="product-actions-btn">
+                    <button class="add-to-cart" onclick="addToCart('${product.id}')">Add to Cart</button>
+                    <button class="buy-now-btn" onclick="buyNow('${product.id}')">Buy Now</button>
+                </div>
             </div>
         </div>
     `).join('');
