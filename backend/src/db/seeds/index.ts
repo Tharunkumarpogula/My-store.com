@@ -87,10 +87,10 @@ const main = async () => {
             },
             {
                 name: 'Pure Leather Casual Sneakers',
-                description: 'Handcrafted genuine leather sneakers designed for comfort and long-lasting durability.',
+                description: 'Handcrafted dark brown genuine leather sneakers designed for supreme comfort and versatile style. Featuring memory foam insoles and a durable rubber outsole.',
                 priceCents: 459900, // ₹ 4,599
                 currency: 'INR',
-                imageUrl: 'images/product-placeholder.jpg',
+                imageUrl: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&q=80&w=800',
                 isActive: true,
             },
             {

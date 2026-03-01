@@ -1,0 +1,45 @@
+name: Backend CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      sqlite:
+        image: bitnami/sqlite:latest
+        ports:
+          - 5432:5432 # Not actually needed for sqlite but good as placeholder
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Use Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18.x'
+        cache: 'npm'
+        cache-dependency-path: backend/package.json
+
+    - name: Install Dependencies
+      working-directory: ./backend
+      run: npm install
+
+    - name: Build Backend
+      working-directory: ./backend
+      run: npm run build
+
+    - name: Run Database Seeder (Validation)
+      working-directory: ./backend
+      run: |
+        npm run migrate
+        npm run seed
+      env:
+        DB_DIALECT: sqlite
+        DB_SQLITE_STORAGE: ./dev.sqlite
+        PORT: 3000
