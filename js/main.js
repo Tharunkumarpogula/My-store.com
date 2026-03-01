@@ -377,17 +377,17 @@ function renderCartItems() {
                     <h3 class="cart-item-title">${product.name}</h3>
                     <p class="cart-item-price">₹ ${product.price.toLocaleString('en-IN')}</p>
                     <div class="cart-item-actions">
-                        <div class="quantity-controls">
-                            <button class="quantity-btn minus" onclick="updateCartItemQuantity(${item.id}, ${item.quantity - 1})">-</button>
-                            <input type="number" class="quantity-input" value="${item.quantity}" min="1" max="10" onchange="updateCartItemQuantity(${item.id}, this.value)">
-                            <button class="quantity-btn plus" onclick="updateCartItemQuantity(${item.id}, ${item.quantity + 1})">+</button>
+                        <div class="quantity-controls-small">
+                            <button class="qty-btn-small" onclick="updateCartItemQuantity('${item.id}', ${item.quantity - 1})" title="Decrease quantity">-</button>
+                            <input type="number" class="qty-input" value="${item.quantity}" min="1" max="99" onchange="updateCartItemQuantity('${item.id}', this.value)">
+                            <button class="qty-btn-small" onclick="updateCartItemQuantity('${item.id}', ${item.quantity + 1})" title="Increase quantity">+</button>
                         </div>
-                        <button class="remove-item" onclick="removeFromCart(${item.id})" title="Remove item">
-                            <i class="fas fa-trash"></i>
+                        <button class="remove-btn" onclick="removeFromCart('${item.id}')" title="Remove item">
+                            <i class="fas fa-trash"></i> Delete
                         </button>
                     </div>
-                    <div class="item-total">
-                        Total: ₹ ${(product.price * item.quantity).toLocaleString('en-IN')}
+                    <div class="item-total" style="margin-top: 10px; font-weight: 600;">
+                        Item Total: ₹ ${(product.price * item.quantity).toLocaleString('en-IN')}
                     </div>
                 </div>
             </div>
@@ -411,12 +411,12 @@ function updateCartSummary() {
     }, 0);
 
     const shipping = subtotal > 0 ? (subtotal > 5000 ? 0 : 99) : 0;
-    const gst = subtotal * 0.18;
-    const total = subtotal + shipping + gst;
+    const gst = Math.round(subtotal * 0.18);
+    const total = Math.round(subtotal + shipping + gst);
 
     subtotalElement.textContent = `₹ ${subtotal.toLocaleString('en-IN')}`;
     shippingElement.textContent = `₹ ${shipping.toLocaleString('en-IN')}`;
-    gstElement.textContent = `₹ ${(gst).toLocaleString('en-IN')}`;
+    gstElement.textContent = `₹ ${gst.toLocaleString('en-IN')}`;
     totalElement.textContent = `₹ ${total.toLocaleString('en-IN')}`;
 
     // Also update order summary on checkout page
@@ -459,12 +459,12 @@ function updateOrderSummary() {
         }, 0);
 
         const shipping = subtotal > 0 ? (subtotal > 5000 ? 0 : 99) : 0;
-        const gst = subtotal * 0.18;
-        const total = subtotal + shipping + gst;
+        const gst = Math.round(subtotal * 0.18);
+        const total = Math.round(subtotal + shipping + gst);
 
         summarySubtotal.textContent = `₹ ${subtotal.toLocaleString('en-IN')}`;
         summaryShipping.textContent = `₹ ${shipping.toLocaleString('en-IN')}`;
-        summaryGst.textContent = `₹ ${(gst).toLocaleString('en-IN')}`;
+        summaryGst.textContent = `₹ ${gst.toLocaleString('en-IN')}`;
         summaryTotal.textContent = `₹ ${total.toLocaleString('en-IN')}`;
     }
 }
