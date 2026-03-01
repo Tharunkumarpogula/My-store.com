@@ -99,7 +99,9 @@ function setupEventListeners() {
 function updateCartCount() {
     const cartCountElement = document.querySelector('.cart-count');
     if (cartCountElement) {
-        cartCountElement.textContent = cart.length;
+        // Show total quantity of all items, not just unique items count
+        const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+        cartCountElement.textContent = totalItems;
     }
 }
 
@@ -111,19 +113,27 @@ function addToCart(productId, quantity = 1) {
 
     if (existingItem) {
         existingItem.quantity += quantity;
+        // Increase limit from 10 to 99
+        if (existingItem.quantity > 99) existingItem.quantity = 99;
     } else {
         cart.push({
             id: product.id,
             name: product.name,
             price: product.price,
             image: product.image,
-            quantity: quantity
+            quantity: Math.min(quantity, 99)
         });
     }
 
-    saveCart(); // Use the new saveCart function
+    saveCart();
     updateCartCount();
-    showNotification(`${product.name} added to cart!`);
+
+    // Also update UI if on cart page
+    if (typeof renderCartItems === 'function') {
+        renderCartItems();
+    }
+
+    showNotification(`${product.name} added to cart!`, 'success');
 }
 
 function removeFromCart(productId) {
@@ -146,8 +156,8 @@ function updateCartItemQuantity(productId, newQuantity) {
         return;
     }
 
-    if (newQuantity > 10) {
-        showNotification('Maximum quantity is 10 per item', 'error');
+    if (newQuantity > 99) {
+        showNotification('Maximum quantity is 99 per item', 'error');
         return;
     }
 
@@ -642,36 +652,7 @@ function showNotification(message, type = 'success') {
 }
 
 // Enhanced cart functions with email persistence
-function addToCart(productId, quantity = 1) {
-    const product = products.find(p => p.id == productId);
-    if (!product) return;
-
-    const existingItem = cart.find(item => item.id == productId);
-
-    if (existingItem) {
-        existingItem.quantity += quantity;
-    } else {
-        cart.push({
-            id: product.id,
-            name: product.name,
-            price: product.price,
-            image: product.image,
-            quantity: quantity
-        });
-    }
-
-    // Save cart to localStorage
-    saveCart(); // Use the new saveCart function
-    updateCartCount();
-
-    // If user is logged in, also save to email-specific storage
-    const userEmail = localStorage.getItem('userEmail');
-    if (userEmail) {
-        localStorage.setItem(`cart_${userEmail}`, JSON.stringify(cart));
-    }
-
-    showNotification(`${product.name} added to cart!`, 'success');
-}
+// Consolidated addToCart above
 
 // Page transition effects
 function smoothRedirect(url) {

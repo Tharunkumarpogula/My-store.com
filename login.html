@@ -148,6 +148,14 @@
 
                     <button type="submit" class="btn btn-primary btn-block" id="signup-submit-btn">Create
                         Account</button>
+
+                    <div class="divider">
+                        <span>or</span>
+                    </div>
+
+                    <button type="button" class="btn btn-secondary btn-block google-login">
+                        <i class="fab fa-google"></i> Continue with Google
+                    </button>
                 </form>
             </div>
 
@@ -399,6 +407,22 @@
                 setTimeout(() => notification.remove(), 300);
             }, 3000);
         }
+
+        // Google Login Simulation
+        document.querySelectorAll('.google-login').forEach(btn => {
+            btn.addEventListener('click', function () {
+                showLoading();
+                setTimeout(() => {
+                    localStorage.setItem('userLoggedIn', 'true');
+                    localStorage.setItem('userEmail', 'googleuser@gmail.com');
+                    localStorage.setItem('username', 'Google User');
+                    showNotification('Logged in with Google successfully!', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1000);
+                }, 1500);
+            });
+        });
     </script>
 </body>
 
