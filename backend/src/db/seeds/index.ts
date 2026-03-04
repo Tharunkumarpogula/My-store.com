@@ -100,6 +100,46 @@ const main = async () => {
                 currency: 'INR',
                 imageUrl: 'images/smartwatch.jpg',
                 isActive: true,
+            },
+            {
+                name: 'Classic Blue Denim Jeans',
+                description: 'Comfort stretch denim with a modern fit, made for everyday wear.',
+                priceCents: 199900, // ₹ 1,999
+                currency: 'INR',
+                imageUrl: 'images/jeans.jpg',
+                isActive: true,
+            },
+            {
+                name: 'Essential White T-Shirt',
+                description: 'Soft cotton tee that pairs with everything. Minimal, clean, and comfy.',
+                priceCents: 69900, // ₹ 699
+                currency: 'INR',
+                imageUrl: 'images/tshirt.jpg',
+                isActive: true,
+            },
+            {
+                name: 'Premium Coffee Maker',
+                description: 'Brew rich coffee at home with consistent taste and easy cleanup.',
+                priceCents: 399900, // ₹ 3,999
+                currency: 'INR',
+                imageUrl: 'images/coffeemaker.jpg',
+                isActive: true,
+            },
+            {
+                name: 'Studio Headphones',
+                description: 'Clear audio with comfortable ear cups for long listening sessions.',
+                priceCents: 299900, // ₹ 2,999
+                currency: 'INR',
+                imageUrl: 'images/headphones.jpg',
+                isActive: true,
+            },
+            {
+                name: 'Compact Home Speaker',
+                description: 'Everyday speaker for music, podcasts, and calls with balanced sound.',
+                priceCents: 249900, // ₹ 2,499
+                currency: 'INR',
+                imageUrl: 'images/speaker.jpg',
+                isActive: true,
             }
         ];
 

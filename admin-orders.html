@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Orders - ModernShop</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">
+                    <a href="index.html">ModernShop</a>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="shop.html">Shop</a></li>
+                    <li><a href="cart.html">Cart</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="page-banner">
+        <div class="container">
+            <h1>Admin - Orders</h1>
+            <p>View daily orders stored in the database</p>
+        </div>
+    </section>
+
+    <section class="checkout-section">
+        <div class="container">
+            <div class="checkout-container" style="grid-template-columns: 1fr;">
+                <div class="checkout-form">
+                    <h2>Filters</h2>
+
+                    <div class="form-group">
+                        <label for="date">Date (YYYY-MM-DD)</label>
+                        <input type="text" id="date" placeholder="2026-03-02">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="token">Admin Token (optional)</label>
+                        <input type="password" id="token" placeholder="If backend requires it">
+                        <small>If you set <b>ADMIN_TOKEN</b> in backend env, paste it here.</small>
+                    </div>
+
+                    <button class="btn btn-primary" id="loadBtn" type="button">Load Orders</button>
+                    <p id="status" style="margin-top: 12px;"></p>
+                </div>
+
+                <div class="order-summary" style="overflow-x:auto;">
+                    <h2>Orders</h2>
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr>
+                                <th style="text-align:left; padding: 10px; border-bottom: 1px solid #ddd;">Order ID</th>
+                                <th style="text-align:left; padding: 10px; border-bottom: 1px solid #ddd;">Customer Email</th>
+                                <th style="text-align:left; padding: 10px; border-bottom: 1px solid #ddd;">Status</th>
+                                <th style="text-align:left; padding: 10px; border-bottom: 1px solid #ddd;">Total</th>
+                                <th style="text-align:left; padding: 10px; border-bottom: 1px solid #ddd;">Created</th>
+                                <th style="text-align:left; padding: 10px; border-bottom: 1px solid #ddd;">Items</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersBody">
+                            <tr><td colspan="6" style="padding: 10px;">No data loaded yet.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Keep consistent with js/main.js
+        const API_URL = 'http://localhost:3000/api';
+
+        const formatMoney = (cents, currency) => {
+            const amount = (Number(cents) || 0) / 100;
+            const ccy = currency || 'INR';
+            return `${ccy} ${amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        };
+
+        const escapeHtml = (value) => {
+            const div = document.createElement('div');
+            div.textContent = String(value ?? '');
+            return div.innerHTML;
+        };
+
+        async function loadOrders() {
+            const date = document.getElementById('date').value.trim();
+            const token = document.getElementById('token').value.trim();
+            const statusEl = document.getElementById('status');
+            const bodyEl = document.getElementById('ordersBody');
+
+            statusEl.textContent = 'Loading...';
+            bodyEl.innerHTML = '';
+
+            const url = new URL(`${API_URL}/admin/orders`);
+            if (date) url.searchParams.set('date', date);
+
+            const headers = {};
+            if (token) headers['Authorization'] = `Bearer ${token}`;
+
+            try {
+                const resp = await fetch(url.toString(), { headers });
+                if (!resp.ok) {
+                    const text = await resp.text();
+                    throw new Error(text || `HTTP ${resp.status}`);
+                }
+                const orders = await resp.json();
+
+                if (!Array.isArray(orders) || orders.length === 0) {
+                    bodyEl.innerHTML = '<tr><td colspan="6" style="padding: 10px;">No orders found.</td></tr>';
+                    statusEl.textContent = 'Done.';
+                    return;
+                }
+
+                for (const o of orders) {
+                    const itemsCount = Array.isArray(o.items) ? o.items.reduce((s, it) => s + (Number(it.quantity) || 0), 0) : 0;
+                    const created = o.createdAt ? new Date(o.createdAt).toLocaleString() : '';
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td style="padding: 10px; border-bottom: 1px solid #eee;">${escapeHtml(o.id)}</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #eee;">${escapeHtml(o.user?.email || '')}</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #eee;">${escapeHtml(o.status)}</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #eee;">${escapeHtml(formatMoney(o.totalCents, o.currency))}</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #eee;">${escapeHtml(created)}</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #eee;">${escapeHtml(itemsCount)}</td>
+                    `;
+                    bodyEl.appendChild(tr);
+                }
+
+                statusEl.textContent = `Loaded ${orders.length} order(s).`;
+            } catch (e) {
+                console.error(e);
+                bodyEl.innerHTML = '<tr><td colspan="6" style="padding: 10px;">Failed to load orders.</td></tr>';
+                statusEl.textContent = 'Failed. Make sure backend is running on http://localhost:3000 and (if enabled) the admin token is correct.';
+            }
+        }
+
+        document.getElementById('loadBtn').addEventListener('click', loadOrders);
+    </script>
+</body>
+</html>

@@ -270,11 +270,61 @@
             shippingSection.style.display = this.checked ? 'none' : 'block';
         });
         
-        function placeOrder() {
-            alert('Order placed successfully! Thank you for shopping with us.');
-            // Clear cart after order placement
-            localStorage.removeItem('cart');
-            window.location.href = 'index.html';
+        async function placeOrder() {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            if (!Array.isArray(cart) || cart.length === 0) {
+                alert('Your cart is empty.');
+                return;
+            }
+
+            const firstName = (document.getElementById('first-name')?.value || '').trim();
+            const lastName = (document.getElementById('last-name')?.value || '').trim();
+            const email = (document.getElementById('email')?.value || '').trim();
+            const phone = (document.getElementById('phone')?.value || '').trim();
+            const paymentMethod = document.querySelector('input[name="payment"]:checked')?.value || 'cod';
+
+            if (!firstName || !lastName || !email || !phone) {
+                alert('Please fill in your name, email, and phone number.');
+                return;
+            }
+
+            const payload = {
+                customer: {
+                    name: `${firstName} ${lastName}`.trim(),
+                    email,
+                    mobileNumber: phone,
+                },
+                currency: 'INR',
+                paymentMethod,
+                items: cart.map(item => ({
+                    productId: item.id,
+                    quantity: Number(item.quantity) || 1,
+                    unitPriceCents: Math.round((Number(item.price) || 0) * 100),
+                })),
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/orders`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload),
+                });
+
+                if (!response.ok) {
+                    const message = await response.text();
+                    throw new Error(message || 'Failed to place order');
+                }
+
+                const data = await response.json();
+                alert(`Order placed successfully! Your Order ID is ${data.orderId}`);
+
+                // Clear cart after order placement
+                localStorage.removeItem('cart');
+                window.location.href = 'index.html';
+            } catch (error) {
+                console.error('Order placement failed:', error);
+                alert('Could not save your order to the database. Please make sure the backend is running on http://localhost:3000 and try again.');
+            }
         }
     </script>
 </body>

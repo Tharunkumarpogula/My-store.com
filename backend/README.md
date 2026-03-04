@@ -77,6 +77,33 @@ my-website-database
    npm start
    ```
 
+## Local Preview (recommended)
+
+1. Start Docker Desktop (must be running).
+2. Start Postgres:
+   ```
+   docker compose up -d
+   ```
+3. Create tables + seed products:
+   ```
+   npm run migrate
+   npm run seed
+   ```
+4. Start API server:
+   ```
+   npm start
+   ```
+
+### View daily orders
+
+- API endpoint (in browser):
+  - `http://localhost:3000/api/admin/orders`
+  - `http://localhost:3000/api/admin/orders?date=YYYY-MM-DD`
+- CLI:
+  ```
+  npm run view-data -- --date=YYYY-MM-DD
+  ```
+
 ### Instant preview mode (no Postgres/Docker)
 
 If you just want to see it working immediately, use SQLite:
