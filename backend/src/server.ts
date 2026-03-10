@@ -35,11 +35,40 @@ const requireAdmin = (req: express.Request, res: express.Response, next: express
 };
 
 // Routes
+app.post('/api/products', async (req, res) => {
+    try {
+        const { name, description, price, imageUrl, category, userId } = req.body;
+
+        if (!name || !price || !category) {
+            return res.status(400).json({ error: 'Name, Price, and Category are required' });
+        }
+
+        const product = await models.Product.create({
+            name,
+            description,
+            priceCents: Math.round(Number(price) * 100),
+            currency: 'INR',
+            imageUrl: imageUrl || 'images/product-placeholder.jpg',
+            category,
+            userId, // Link to retailer
+            isActive: true
+        });
+
+        res.status(201).json(product);
+    } catch (error: any) {
+        console.error('Error creating product:', error);
+        res.status(500).json({ error: error.message || 'Internal Server Error' });
+    }
+});
+
 app.get('/api/products', async (req, res) => {
     try {
-        const products = await models.Product.findAll({
-            where: { isActive: true }
-        });
+        const category = typeof req.query.category === 'string' ? req.query.category : undefined;
+        const where: any = { isActive: true };
+        if (category) {
+            where.category = category;
+        }
+        const products = await models.Product.findAll({ where });
         res.json(products);
     } catch (error) {
         console.error('Error fetching products:', error);
@@ -233,15 +262,20 @@ app.get('/api/admin/orders', requireAdmin, async (req, res) => {
 
 app.post('/api/register', async (req, res) => {
     try {
-        const { username, email, mobileNumber, password } = req.body;
+        const { username, email, mobileNumber, password, role, businessMode, shopCategory, photoIdUrl } = req.body;
         // Note: In a real app, we'd hash the password here
         const user = await models.User.create({
             username,
             email,
             mobileNumber,
             passwordHash: password, // Placeholder for hashed password
+            role: role || 'customer',
+            businessMode,
+            shopCategory,
+            photoIdUrl,
+            businessVerificationStatus: role === 'retailer' ? 'pending' : null
         });
-        res.status(201).json({ id: user.id, username: user.username, email: user.email });
+        res.status(201).json({ id: user.id, username: user.username, email: user.email, role: user.role });
     } catch (error: any) {
         console.error('Error registering user:', error);
         res.status(400).json({ error: error.message || 'Registration failed' });
@@ -257,7 +291,13 @@ app.post('/api/login', async (req, res) => {
             return res.status(401).json({ error: 'Invalid email or password' });
         }
 
-        res.json({ id: user.id, username: user.username, email: user.email });
+        res.json({
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            role: user.role,
+            businessVerificationStatus: user.businessVerificationStatus
+        });
     } catch (error) {
         console.error('Error logging in:', error);
         res.status(500).json({ error: 'Internal Server Error' });

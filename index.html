@@ -14,6 +14,12 @@
 </head>
 
 <body>
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="loader"></div>
+        <p>Loading ModernShop...</p>
+    </div>
+
     <!-- Header/Navigation -->
     <header class="header">
         <div class="container">
@@ -26,9 +32,17 @@
                     <ul>
                         <li><a href="index.html" class="active"><i class="fas fa-home"></i> Home</a></li>
                         <li><a href="shop.html"><i class="fas fa-shopping-bag"></i> Shop</a></li>
-                        <li><a href="#"><i class="fas fa-tags"></i> Categories</a></li>
                         <li><a href="about.html"><i class="fas fa-info-circle"></i> About Us</a></li>
                         <li><a href="contact.html"><i class="fas fa-phone"></i> Contact</a></li>
+                        <li class="dropdown">
+                            <a href="#"><i class="fas fa-headset"></i> Support</a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#" onclick="showSupport('damaged')">Damaged Order</a></li>
+                                <li><a href="#" onclick="showSupport('misplaced')">Misplaced Order</a></li>
+                                <li><a href="#" onclick="showSupport('delay')">Delivery Delay</a></li>
+                                <li><a href="#" onclick="showSupport('other')">Other Help</a></li>
+                            </ul>
+                        </li>
                     </ul>
                 </nav>
 
@@ -75,19 +89,19 @@
         <div class="container">
             <h2 class="section-title">Shop By Category</h2>
             <div class="category-grid">
-                <div class="category-card">
+                <div class="category-card" onclick="navigateToCategory('electronics')">
                     <img src="images/premium-laptop.png" alt="Electronics">
                     <h3>Electronics</h3>
                 </div>
-                <div class="category-card">
+                <div class="category-card" onclick="navigateToCategory('fashion')">
                     <img src="images/premium-tshirt.png" alt="Fashion">
                     <h3>Fashion</h3>
                 </div>
-                <div class="category-card">
+                <div class="category-card" onclick="navigateToCategory('home-kitchen')">
                     <img src="images/cookware.jpg" alt="Home & Kitchen">
                     <h3>Home & Kitchen</h3>
                 </div>
-                <div class="category-card">
+                <div class="category-card" onclick="navigateToCategory('beauty')">
                     <img src="images/facecream.jpg" alt="Beauty">
                     <h3>Beauty</h3>
                 </div>

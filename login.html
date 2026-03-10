@@ -72,6 +72,15 @@
 
                 <!-- Signup Form -->
                 <form id="signup-form" class="auth-form">
+                    <div class="role-selector">
+                        <div class="role-tab active customer" data-role="customer" onclick="setRole('customer')">
+                            <i class="fas fa-user"></i> Consumer
+                        </div>
+                        <div class="role-tab retailer" data-role="retailer" onclick="setRole('retailer')">
+                            <i class="fas fa-store"></i> Retailer
+                        </div>
+                    </div>
+
                     <div class="form-row">
                         <div class="form-group">
                             <label for="first-name">First Name</label>
@@ -123,6 +132,41 @@
                         </div>
                     </div>
 
+                    <!-- Retailer Specific Fields -->
+                    <div id="retailer-fields" style="display: none;">
+                        <div class="form-group">
+                            <label for="business-mode">Business Mode</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-briefcase"></i>
+                                <select id="business-mode">
+                                    <option value="B2C">B2C (Business to Consumer)</option>
+                                    <option value="B2B">B2B (Business to Business)</option>
+                                    <option value="Both">Both</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="shop-category">Shop Category</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-tag"></i>
+                                <select id="shop-category">
+                                    <option value="electronics">Electronics</option>
+                                    <option value="fashion">Fashion</option>
+                                    <option value="home-kitchen">Home & Kitchen</option>
+                                    <option value="beauty">Beauty</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Verification (Photo ID)</label>
+                            <div class="file-upload-placeholder">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <span>Upload Aadhar/PAN or Business ID</span>
+                                <input type="file" id="photo-id" style="display:none">
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- OTP Section -->
                     <div class="otp-section" id="otp-section" style="display: none;">
                         <div class="form-group">
@@ -168,34 +212,40 @@
 
     <script src="js/main.js"></script>
     <script>
+        // Use global API_URL from main.js
+        const AUTH_API = API_URL;
+
+        // Role Toggling
+        function setRole(role) {
+            document.querySelectorAll('.role-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelector(`.role-tab.${role}`).classList.add('active');
+
+            const retailerFields = document.getElementById('retailer-fields');
+            if (role === 'retailer') {
+                retailerFields.style.display = 'block';
+                retailerFields.querySelectorAll('input, select').forEach(el => el.required = true);
+            } else {
+                retailerFields.style.display = 'none';
+                retailerFields.querySelectorAll('input, select').forEach(el => el.required = false);
+            }
+        }
+
         // Toggle between login and signup forms
         document.getElementById('show-signup').addEventListener('click', function (e) {
             e.preventDefault();
             document.getElementById('login-form').classList.remove('active');
             document.getElementById('signup-form').classList.add('active');
+            document.getElementById('show-signup').parentElement.style.display = 'none';
+            document.getElementById('show-login').parentElement.style.display = 'block';
         });
 
         document.getElementById('show-login').addEventListener('click', function (e) {
             e.preventDefault();
             document.getElementById('signup-form').classList.remove('active');
             document.getElementById('login-form').classList.add('active');
+            document.getElementById('show-login').parentElement.style.display = 'none';
+            document.getElementById('show-signup').parentElement.style.display = 'block';
         });
-
-        // Password toggle function
-        function togglePassword(inputId) {
-            const input = document.getElementById(inputId);
-            const icon = input.nextElementSibling;
-
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
-            } else {
-                input.type = 'password';
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
-            }
-        }
 
         // Form submissions
         document.getElementById('login-form').addEventListener('submit', async function (e) {
@@ -203,53 +253,41 @@
             const email = document.getElementById('login-email').value;
             const password = document.getElementById('login-password').value;
 
-            // Basic validation
-            if (!email || !password) {
-                showNotification('Please fill in all fields', 'error');
-                return;
-            }
-
-            if (!isValidEmail(email)) {
-                showNotification('Please enter a valid email address', 'error');
-                return;
-            }
-
             showLoading();
 
             try {
-                const response = await fetch('http://localhost:8000/api/login', {
+                const response = await fetch(`${AUTH_API}/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password })
                 });
 
                 const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.error || 'Login failed');
-                }
+                if (!response.ok) throw new Error(data.error || 'Login failed');
 
                 localStorage.setItem('userLoggedIn', 'true');
                 localStorage.setItem('userEmail', data.email);
                 localStorage.setItem('username', data.username);
                 localStorage.setItem('userId', data.id);
+                localStorage.setItem('userRole', data.role);
 
                 showNotification('Login successful!', 'success');
 
-                // Merge guest cart with user's saved cart if any
-                // ... (existing cart merging logic)
-
                 setTimeout(() => {
-                    window.location.href = 'index.html';
+                    if (data.role === 'retailer') {
+                        window.location.href = 'dashboard.html';
+                    } else {
+                        window.location.href = 'index.html';
+                    }
                 }, 1000);
             } catch (error) {
-                document.getElementById('loading-screen').style.display = 'none';
+                hideLoading();
                 showNotification(error.message, 'error');
             }
         });
 
         // Signup form submission
-        document.getElementById('signup-submit-btn').addEventListener('click', async function (e) {
+        document.getElementById('signup-form').addEventListener('submit', async function (e) {
             e.preventDefault();
             const firstName = document.getElementById('first-name').value;
             const lastName = document.getElementById('last-name').value;
@@ -257,172 +295,71 @@
             const phone = document.getElementById('phone').value;
             const password = document.getElementById('signup-password').value;
             const confirmPassword = document.getElementById('confirm-password').value;
-
-            // Validation
-            if (!firstName || !lastName || !email || !phone || !password) {
-                showNotification('Please fill in all required fields', 'error');
-                return;
-            }
-
-            if (!isValidEmail(email)) {
-                showNotification('Please enter a valid email address', 'error');
-                return;
-            }
+            const role = document.querySelector('.role-tab.active').dataset.role;
 
             if (password !== confirmPassword) {
                 showNotification('Passwords do not match!', 'error');
                 return;
             }
 
-            if (password.length < 6) {
-                showNotification('Password must be at least 6 characters!', 'error');
-                return;
+            const payload = {
+                username: `${firstName} ${lastName}`,
+                email,
+                mobileNumber: phone,
+                password,
+                role
+            };
+
+            if (role === 'retailer') {
+                payload.businessMode = document.getElementById('business-mode').value;
+                payload.shopCategory = document.getElementById('shop-category').value;
+                payload.photoIdUrl = 'file://placeholder-id.jpg'; // Mock for now
             }
 
             showLoading();
 
             try {
-                const username = `${firstName} ${lastName}`;
-                const response = await fetch('http://localhost:8000/api/register', {
+                const response = await fetch(`${AUTH_API}/register`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        username,
-                        email,
-                        mobileNumber: phone,
-                        password
-                    })
+                    body: JSON.stringify(payload)
                 });
 
                 const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.error || 'Registration failed');
-                }
+                if (!response.ok) throw new Error(data.error || 'Registration failed');
 
                 showNotification('Account created successfully!', 'success');
 
-                // Auto-login after registration
+                // Auto-login
                 localStorage.setItem('userLoggedIn', 'true');
                 localStorage.setItem('userEmail', data.email);
                 localStorage.setItem('username', data.username);
+                localStorage.setItem('userRole', data.role);
 
                 setTimeout(() => {
-                    window.location.href = 'index.html';
+                    if (data.role === 'retailer') {
+                        window.location.href = 'dashboard.html';
+                    } else {
+                        window.location.href = 'index.html';
+                    }
                 }, 1500);
             } catch (error) {
-                document.getElementById('loading-screen').style.display = 'none';
+                hideLoading();
                 showNotification(error.message, 'error');
             }
         });
 
-        // OTP verification
-        function verifyOTP(e) {
-            e.preventDefault();
-            const otp = document.getElementById('otp').value;
-            const demoOTP = localStorage.getItem('demoOTP');
-            const email = document.getElementById('signup-email').value;
-
-            if (otp !== demoOTP) {
-                showNotification('Invalid OTP! Demo OTP is 123456', 'error');
-                return;
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = input.nextElementSibling;
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
             }
-
-            if (otp.length !== 6) {
-                showNotification('Please enter a valid 6-digit OTP!', 'error');
-                return;
-            }
-
-            showLoading();
-            setTimeout(() => {
-                localStorage.setItem('userLoggedIn', 'true');
-                localStorage.setItem('userEmail', email); // Save user's email
-                localStorage.removeItem('demoOTP');
-                showNotification('Account created successfully!', 'success');
-
-                // Initialize user's cart storage
-                const guestCart = JSON.parse(localStorage.getItem('cart') || '[]');
-                localStorage.setItem(`cart_${email}`, JSON.stringify(guestCart));
-
-                window.location.href = 'index.html';
-            }, 2000);
         }
-
-        // Validate email format
-        function isValidEmail(email) {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return emailRegex.test(email);
-        }
-
-        // Resend OTP
-        document.getElementById('resend-otp').addEventListener('click', function () {
-            const demoOTP = localStorage.getItem('demoOTP') || '123456';
-            showNotification(`OTP resent! Demo OTP: ${demoOTP}`, 'success');
-        });
-
-        // Skip OTP for demo
-        document.getElementById('skip-otp').addEventListener('click', function () {
-            showLoading();
-            setTimeout(() => {
-                localStorage.setItem('userLoggedIn', 'true');
-                localStorage.removeItem('demoOTP');
-                showNotification('Account created successfully! (OTP skipped for demo)', 'success');
-                window.location.href = 'index.html';
-            }, 1500);
-        });
-
-        // Loading screen
-        function showLoading() {
-            document.getElementById('loading-screen').style.display = 'flex';
-        }
-
-        // Hide loading screen after page load
-        window.addEventListener('load', function () {
-            setTimeout(() => {
-                document.getElementById('loading-screen').style.display = 'none';
-            }, 1500);
-        });
-
-        // Enhanced notification system
-        function showNotification(message, type = 'success') {
-            // Remove existing notifications
-            const existing = document.querySelectorAll('.notification');
-            existing.forEach(el => el.remove());
-
-            const notification = document.createElement('div');
-            notification.className = `notification ${type}`;
-            notification.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
-                    <span>${message}</span>
-                </div>
-            `;
-
-            document.body.appendChild(notification);
-
-            setTimeout(() => notification.classList.add('show'), 100);
-
-            setTimeout(() => {
-                notification.classList.remove('show');
-                setTimeout(() => notification.remove(), 300);
-            }, 3000);
-        }
-
-        // Google Login Simulation
-        document.querySelectorAll('.google-login').forEach(btn => {
-            btn.addEventListener('click', function () {
-                showLoading();
-                setTimeout(() => {
-                    localStorage.setItem('userLoggedIn', 'true');
-                    localStorage.setItem('userEmail', 'googleuser@gmail.com');
-                    localStorage.setItem('username', 'Google User');
-                    showNotification('Logged in with Google successfully!', 'success');
-                    setTimeout(() => {
-                        window.location.href = 'index.html';
-                    }, 1000);
-                }, 1500);
-            });
-        });
     </script>
 </body>
 

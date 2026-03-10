@@ -15,20 +15,30 @@ export class User extends Model<InferAttributes<User>, InferCreationAttributes<U
   declare email: string;
   declare mobileNumber: string;
   declare passwordHash: string;
+  declare role: CreationOptional<'customer' | 'retailer'>;
   declare profilePictureUrl: CreationOptional<string | null>;
+
+  // Retailer specific fields
+  declare businessMode: CreationOptional<string | null>;
+  declare shopCategory: CreationOptional<string | null>;
+  declare businessVerificationStatus: CreationOptional<'pending' | 'verified' | 'rejected' | null>;
+  declare photoIdUrl: CreationOptional<string | null>;
 
   declare carts?: NonAttribute<Cart[]>;
   declare orders?: NonAttribute<Order[]>;
   declare paymentMethods?: NonAttribute<PaymentMethod[]>;
+  declare products?: NonAttribute<Product[]>; // Products owned by retailer
 }
 
 export class Product extends Model<InferAttributes<Product>, InferCreationAttributes<Product>> {
   declare id: CreationOptional<string>;
+  declare userId: ForeignKey<User['id']>; // Retailer ID
   declare name: string;
   declare description: CreationOptional<string | null>;
   declare priceCents: number;
   declare currency: CreationOptional<string>;
   declare imageUrl: CreationOptional<string | null>;
+  declare category: CreationOptional<string>;
   declare isActive: CreationOptional<boolean>;
 }
 
@@ -130,7 +140,12 @@ export const initModels = (sequelize: Sequelize): DbModels => {
       email: { type: DataTypes.STRING(254), allowNull: false, unique: true },
       mobileNumber: { type: DataTypes.STRING(20), allowNull: false },
       passwordHash: { type: DataTypes.TEXT, allowNull: false },
+      role: { type: DataTypes.STRING(16), allowNull: false, defaultValue: 'customer' },
       profilePictureUrl: { type: DataTypes.TEXT, allowNull: true },
+      businessMode: { type: DataTypes.STRING(50), allowNull: true },
+      shopCategory: { type: DataTypes.STRING(50), allowNull: true },
+      businessVerificationStatus: { type: DataTypes.STRING(16), allowNull: true },
+      photoIdUrl: { type: DataTypes.TEXT, allowNull: true },
     },
     { sequelize, tableName: 'users' },
   );
@@ -138,11 +153,13 @@ export const initModels = (sequelize: Sequelize): DbModels => {
   Product.init(
     {
       id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
+      userId: { type: DataTypes.UUID, allowNull: true }, // Optional for now
       name: { type: DataTypes.TEXT, allowNull: false },
       description: { type: DataTypes.TEXT, allowNull: true },
       priceCents: { type: DataTypes.INTEGER, allowNull: false },
-      currency: { type: DataTypes.STRING(3), allowNull: false, defaultValue: 'USD' },
+      currency: { type: DataTypes.STRING(3), allowNull: false, defaultValue: 'INR' },
       imageUrl: { type: DataTypes.TEXT, allowNull: true },
+      category: { type: DataTypes.STRING(50), allowNull: false, defaultValue: 'electronics' },
       isActive: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
     },
     { sequelize, tableName: 'products' },
@@ -259,6 +276,9 @@ export const initModels = (sequelize: Sequelize): DbModels => {
 
   User.hasMany(PaymentMethod, { foreignKey: 'userId', as: 'paymentMethods', onDelete: 'CASCADE' });
   PaymentMethod.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+
+  User.hasMany(Product, { foreignKey: 'userId', as: 'products' });
+  Product.belongsTo(User, { foreignKey: 'userId', as: 'retailer' });
 
   modelsCache = {
     User,

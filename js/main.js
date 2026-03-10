@@ -128,8 +128,20 @@ const MOCK_PRODUCTS = [
 ];
 
 async function fetchProducts() {
+    showLoading();
     try {
-        const response = await fetch(`${API_URL}/products`);
+        const params = new URLSearchParams(window.location.search);
+        const category = params.get('category');
+
+        let url = `${API_URL}/products`;
+        if (category) {
+            url += `?category=${category}`;
+            // Also update category filter UI if on shop page
+            const categoryFilter = document.getElementById('category-filter');
+            if (categoryFilter) categoryFilter.value = category;
+        }
+
+        const response = await fetch(url);
         if (!response.ok) throw new Error('Failed to fetch products');
         let data = await response.json();
 
@@ -146,8 +158,11 @@ async function fetchProducts() {
                 specifications: p.specifications || []
             }));
         } else {
-            // Fallback to mock if data is empty
+            // Fallback to mock if data is empty or filtered out
             products = [...MOCK_PRODUCTS];
+            if (category) {
+                products = products.filter(p => p.category === category);
+            }
         }
 
         initializeApp();
@@ -160,8 +175,11 @@ async function fetchProducts() {
         if (window.location.pathname.includes('login.html')) {
             showNotification('Using offline mode. Backend authentication unavailable.', 'warning');
         }
+    } finally {
+        setTimeout(hideLoading, 500); // Give it a bit of time for a smooth feel
     }
 }
+
 
 
 // Initialize the app
@@ -953,6 +971,120 @@ window.logout = logout;
 window.showNotification = showNotification;
 window.smoothRedirect = smoothRedirect;
 window.smoothNavigate = smoothNavigate;
+
+async function placeOrder() {
+    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    if (!Array.isArray(cart) || cart.length === 0) {
+        showNotification('Your cart is empty.', 'error');
+        return;
+    }
+
+    const firstName = (document.getElementById('first-name')?.value || '').trim();
+    const lastName = (document.getElementById('last-name')?.value || '').trim();
+    const email = (document.getElementById('email')?.value || '').trim();
+    const phone = (document.getElementById('phone')?.value || '').trim();
+    const paymentMethod = document.querySelector('input[name="payment"]:checked')?.value || 'cod';
+
+    if (!firstName || !lastName || !email || !phone) {
+        showNotification('Please fill in all required fields.', 'warning');
+        return;
+    }
+
+    showLoading();
+
+    const payload = {
+        customer: {
+            name: `${firstName} ${lastName}`.trim(),
+            email,
+            mobileNumber: phone,
+        },
+        currency: 'INR',
+        paymentMethod,
+        items: cart.map(item => ({
+            productId: item.id,
+            quantity: Number(item.quantity) || 1
+        })),
+    };
+
+    try {
+        const response = await fetch(`${API_URL}/orders`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Failed to place order');
+        }
+
+        const data = await response.json();
+        showNotification(`Order placed successfully! Order ID: ${data.orderId}`, 'success');
+
+        // Clear cart after order placement
+        localStorage.removeItem('cart');
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 2000);
+    } catch (error) {
+        console.error('Order placement failed:', error);
+        showNotification(error.message || 'Could not place order. Please try again.', 'error');
+    } finally {
+        hideLoading();
+    }
+}
+
+window.placeOrder = placeOrder;
+
+function navigateToCategory(category) {
+    showLoading();
+    setTimeout(() => {
+        window.location.href = `shop.html?category=${category}`;
+    }, 500);
+}
+
+function showSupport(type) {
+    let title = '';
+    let message = '';
+
+    switch (type) {
+        case 'damaged':
+            title = 'Damaged Order Support';
+            message = 'Please share a photo of the damaged product and your Order ID. Our team will contact you within 24 hours for replacement.';
+            break;
+        case 'misplaced':
+            title = 'Misplaced Order Support';
+            message = 'If your order is shown as delivered but you haven\'t received it, please contact our support at +91 9876543210 immediately.';
+            break;
+        case 'delay':
+            title = 'Delivery Delay Support';
+            message = 'Orders may be delayed due to logistics issues. Please check your tracking ID or contact our team help@modernshop.in.';
+            break;
+        default:
+            title = 'Customer Support';
+            message = 'How can we help you today? Contact us: info@modernshop.in';
+    }
+
+    alert(`${title}\n\n${message}`);
+}
+
+window.navigateToCategory = navigateToCategory;
+window.showSupport = showSupport;
+
+function generateOTP() {
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    localStorage.setItem('demoOTP', otp);
+    showNotification(`Demo OTP: ${otp}`, 'warning');
+    return otp;
+}
+
+function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+window.generateOTP = generateOTP;
+window.isValidEmail = isValidEmail;
+
 
 // Load user's cart based on email if logged in
 function loadUserCart() {

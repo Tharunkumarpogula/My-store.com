@@ -1,14 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout - ModernShop</title>
-    <meta name="description" content="Complete your purchase securely. Fast delivery and easy payment options available.">
+    <meta name="description"
+        content="Complete your purchase securely. Fast delivery and easy payment options available.">
     <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
+
 <body>
     <!-- Header/Navigation -->
     <header class="header">
@@ -17,7 +21,7 @@
                 <div class="logo">
                     <h2>Modern<span>Shop</span></h2>
                 </div>
-                
+
                 <nav class="nav-menu">
                     <ul>
                         <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
@@ -27,13 +31,14 @@
                         <li><a href="contact.html"><i class="fas fa-phone"></i> Contact</a></li>
                     </ul>
                 </nav>
-                
+
                 <div class="nav-right">
                     <div class="cart-icon">
                         <i class="fas fa-shopping-cart"></i>
                         <span class="cart-count">0</span>
                     </div>
-                    <button class="btn btn-secondary" onclick="logout()" id="logout-btn" style="display: none;">Logout</button>
+                    <button class="btn btn-secondary" onclick="logout()" id="logout-btn"
+                        style="display: none;">Logout</button>
                     <div class="menu-toggle">
                         <i class="fas fa-bars"></i>
                     </div>
@@ -67,27 +72,27 @@
                                 <input type="text" id="last-name" required>
                             </div>
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="email">Email Address *</label>
                             <input type="email" id="email" required>
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="phone">Phone Number *</label>
                             <input type="tel" id="phone" required>
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="address">Address *</label>
                             <input type="text" id="address" placeholder="Street address" required>
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="address2">Address 2 (Optional)</label>
                             <input type="text" id="address2" placeholder="Apartment, suite, etc. (optional)">
                         </div>
-                        
+
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="city">City *</label>
@@ -114,7 +119,7 @@
                                 <input type="text" id="zip" required>
                             </div>
                         </div>
-                        
+
                         <div class="form-group">
                             <div class="checkbox-group">
                                 <input type="checkbox" id="same-shipping">
@@ -122,7 +127,7 @@
                             </div>
                         </div>
                     </form>
-                    
+
                     <!-- Shipping Address (if different) -->
                     <div id="shipping-address" style="display: none;">
                         <h2>Shipping Information</h2>
@@ -137,17 +142,17 @@
                                     <input type="text" id="ship-last-name" required>
                                 </div>
                             </div>
-                            
+
                             <div class="form-group">
                                 <label for="ship-address">Address *</label>
                                 <input type="text" id="ship-address" placeholder="Street address" required>
                             </div>
-                            
+
                             <div class="form-group">
                                 <label for="ship-address2">Address 2 (Optional)</label>
                                 <input type="text" id="ship-address2" placeholder="Apartment, suite, etc. (optional)">
                             </div>
-                            
+
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="ship-city">City *</label>
@@ -177,13 +182,13 @@
                         </form>
                     </div>
                 </div>
-                
+
                 <div class="order-summary">
                     <h2>Order Summary</h2>
                     <div class="summary-items" id="summary-items">
                         <!-- Order items will be loaded dynamically -->
                     </div>
-                    
+
                     <div class="summary-totals">
                         <div class="summary-item">
                             <span>Subtotal</span>
@@ -203,7 +208,7 @@
                             <span id="summary-total">₹ 0.00</span>
                         </div>
                     </div>
-                    
+
                     <!-- Payment Methods -->
                     <div class="payment-methods">
                         <h3>Payment Method</h3>
@@ -216,7 +221,7 @@
                             <label for="razorpay">Pay with Razorpay (Coming Soon)</label>
                         </div>
                     </div>
-                    
+
                     <button class="btn btn-primary place-order-btn" onclick="placeOrder()">Place Order</button>
                 </div>
             </div>
@@ -265,67 +270,11 @@
     <script src="js/main.js"></script>
     <script>
         // Toggle shipping address form
-        document.getElementById('same-shipping').addEventListener('change', function() {
+        document.getElementById('same-shipping').addEventListener('change', function () {
             const shippingSection = document.getElementById('shipping-address');
             shippingSection.style.display = this.checked ? 'none' : 'block';
         });
-        
-        async function placeOrder() {
-            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-            if (!Array.isArray(cart) || cart.length === 0) {
-                alert('Your cart is empty.');
-                return;
-            }
-
-            const firstName = (document.getElementById('first-name')?.value || '').trim();
-            const lastName = (document.getElementById('last-name')?.value || '').trim();
-            const email = (document.getElementById('email')?.value || '').trim();
-            const phone = (document.getElementById('phone')?.value || '').trim();
-            const paymentMethod = document.querySelector('input[name="payment"]:checked')?.value || 'cod';
-
-            if (!firstName || !lastName || !email || !phone) {
-                alert('Please fill in your name, email, and phone number.');
-                return;
-            }
-
-            const payload = {
-                customer: {
-                    name: `${firstName} ${lastName}`.trim(),
-                    email,
-                    mobileNumber: phone,
-                },
-                currency: 'INR',
-                paymentMethod,
-                items: cart.map(item => ({
-                    productId: item.id,
-                    quantity: Number(item.quantity) || 1,
-                    unitPriceCents: Math.round((Number(item.price) || 0) * 100),
-                })),
-            };
-
-            try {
-                const response = await fetch(`${API_URL}/orders`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload),
-                });
-
-                if (!response.ok) {
-                    const message = await response.text();
-                    throw new Error(message || 'Failed to place order');
-                }
-
-                const data = await response.json();
-                alert(`Order placed successfully! Your Order ID is ${data.orderId}`);
-
-                // Clear cart after order placement
-                localStorage.removeItem('cart');
-                window.location.href = 'index.html';
-            } catch (error) {
-                console.error('Order placement failed:', error);
-                alert('Could not save your order to the database. Please make sure the backend is running on http://localhost:3000 and try again.');
-            }
-        }
     </script>
 </body>
+
 </html>
