@@ -55,6 +55,31 @@ PROJECT/
 3. Upload all files to the root directory (htdocs/www)
 4. Ensure index.html is present
 
+### On Vercel (Frontend + API)
+
+This repo deploys the HTML/CSS/JS site as static files and exposes the Node/Express API as Vercel Serverless Functions under `/api/*`.
+
+**1) Create a Vercel project**
+- Import the GitHub repo into Vercel (recommended), OR use the CLI.
+
+**2) Configure Environment Variables (Project Settings → Environment Variables)**
+- `MONGODB_URI` — MongoDB connection string (required for backend API)
+- `ADMIN_TOKEN` — optional; if set, `/api/admin/orders` requires `Authorization: Bearer <token>`
+
+**3) Deploy**
+- Vercel will automatically build and deploy on every push to `main`.
+
+**CLI option**
+```bash
+npm i -g vercel
+vercel login
+vercel
+```
+
+**Notes**
+- The frontend calls the API via same-origin `/api` on Vercel.
+- For local dev, the frontend runs on `http://localhost:5173` and the backend runs on `http://localhost:3000`.
+
 ## Connecting Payment Gateway (Razorpay)
 
 To integrate real payment processing:

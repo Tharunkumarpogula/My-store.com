@@ -1,8 +1,15 @@
-// Global variables
+﻿// Global variables
 // Initialize cart FIRST so all functions always see a valid array
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 let products = [];
-const API_URL = 'http://localhost:3000/api';
+// Local dev: frontend typically served on 5173 and backend on 3000.
+// Production/Vercel: use same-origin '/api'.
+const API_URL =
+    (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') &&
+    window.location.port &&
+    window.location.port !== '3000'
+        ? 'http://localhost:3000/api'
+        : '/api';
 
 const MOCK_PRODUCTS = [
     {
@@ -391,8 +398,8 @@ function loadFeaturedProducts() {
                     <span>(${product.rating}/5)</span>
                 </div>
                 <div class="price">
-                    ₹ ${product.price.toLocaleString('en-IN')}
-                    <span class="original-price">₹ ${originalPrice.toLocaleString('en-IN')}</span>
+                    â‚¹ ${product.price.toLocaleString('en-IN')}
+                    <span class="original-price">â‚¹ ${originalPrice.toLocaleString('en-IN')}</span>
                 </div>
                 <div class="product-actions-btn">
                     <button class="add-to-cart" onclick="addToCart('${product.id}')">Add to Cart</button>
@@ -422,8 +429,8 @@ function loadAllProducts() {
                     <span>(${product.rating}/5)</span>
                 </div>
                 <div class="price">
-                    ₹ ${product.price.toLocaleString('en-IN')}
-                    <span class="original-price">₹ ${originalPrice.toLocaleString('en-IN')}</span>
+                    â‚¹ ${product.price.toLocaleString('en-IN')}
+                    <span class="original-price">â‚¹ ${originalPrice.toLocaleString('en-IN')}</span>
                 </div>
                 <div class="product-actions-btn">
                     <button class="add-to-cart" onclick="addToCart('${product.id}')">Add to Cart</button>
@@ -464,8 +471,8 @@ function filterProducts() {
                     <span>(${product.rating}/5)</span>
                 </div>
                 <div class="price">
-                    ₹ ${product.price.toLocaleString('en-IN')}
-                    <span class="original-price">₹ ${originalPrice.toLocaleString('en-IN')}</span>
+                    â‚¹ ${product.price.toLocaleString('en-IN')}
+                    <span class="original-price">â‚¹ ${originalPrice.toLocaleString('en-IN')}</span>
                 </div>
                 <div class="product-actions-btn">
                     <button class="add-to-cart" onclick="addToCart('${product.id}')">Add to Cart</button>
@@ -525,8 +532,8 @@ function sortProducts() {
                     <span>(${product.rating}/5)</span>
                 </div>
                 <div class="price">
-                    ₹ ${product.price.toLocaleString('en-IN')}
-                    <span class="original-price">₹ ${originalPrice.toLocaleString('en-IN')}</span>
+                    â‚¹ ${product.price.toLocaleString('en-IN')}
+                    <span class="original-price">â‚¹ ${originalPrice.toLocaleString('en-IN')}</span>
                 </div>
                 <div class="product-actions-btn">
                     <button class="add-to-cart" onclick="addToCart('${product.id}')">Add to Cart</button>
@@ -589,7 +596,7 @@ function renderCartItems() {
                 <img src="${image}" alt="${name}" class="cart-item-image" onerror="this.onerror=null;this.src='images/product-placeholder.jpg';">
                 <div class="cart-item-details">
                     <h3 class="cart-item-title">${name}</h3>
-                    <p class="cart-item-price">₹ ${price.toLocaleString('en-IN')}</p>
+                    <p class="cart-item-price">â‚¹ ${price.toLocaleString('en-IN')}</p>
                     <div class="cart-item-actions">
                         <div class="quantity-controls-small">
                             <button class="qty-btn-small" onclick="updateCartItemQuantity('${item.id}', ${item.quantity - 1})" title="Decrease quantity">-</button>
@@ -601,7 +608,7 @@ function renderCartItems() {
                         </button>
                     </div>
                     <div class="item-total" style="margin-top: 10px; font-weight: 600;">
-                        Item Total: ₹ ${(price * item.quantity).toLocaleString('en-IN')}
+                        Item Total: â‚¹ ${(price * item.quantity).toLocaleString('en-IN')}
                     </div>
                 </div>
             </div>
@@ -629,10 +636,10 @@ function updateCartSummary() {
     const gst = Math.round(subtotal * 0.18);
     const total = Math.round(subtotal + shipping + gst);
 
-    subtotalElement.textContent = `₹ ${subtotal.toLocaleString('en-IN')}`;
-    shippingElement.textContent = `₹ ${shipping.toLocaleString('en-IN')}`;
-    gstElement.textContent = `₹ ${gst.toLocaleString('en-IN')}`;
-    totalElement.textContent = `₹ ${total.toLocaleString('en-IN')}`;
+    subtotalElement.textContent = `â‚¹ ${subtotal.toLocaleString('en-IN')}`;
+    shippingElement.textContent = `â‚¹ ${shipping.toLocaleString('en-IN')}`;
+    gstElement.textContent = `â‚¹ ${gst.toLocaleString('en-IN')}`;
+    totalElement.textContent = `â‚¹ ${total.toLocaleString('en-IN')}`;
 
     // Also update order summary on checkout page
     updateOrderSummary();
@@ -661,9 +668,9 @@ function updateOrderSummary() {
             <div class="summary-item">
                 <div class="item-info">
                     <h4>${name}</h4>
-                    <p>Qty: ${item.quantity} × ₹ ${price.toLocaleString('en-IN')}</p>
+                    <p>Qty: ${item.quantity} Ã— â‚¹ ${price.toLocaleString('en-IN')}</p>
                 </div>
-                <span>₹ ${(price * item.quantity).toLocaleString('en-IN')}</span>
+                <span>â‚¹ ${(price * item.quantity).toLocaleString('en-IN')}</span>
             </div>
         `;
     }).join('');
@@ -679,10 +686,10 @@ function updateOrderSummary() {
         const gst = Math.round(subtotal * 0.18);
         const total = Math.round(subtotal + shipping + gst);
 
-        summarySubtotal.textContent = `₹ ${subtotal.toLocaleString('en-IN')}`;
-        summaryShipping.textContent = `₹ ${shipping.toLocaleString('en-IN')}`;
-        summaryGst.textContent = `₹ ${gst.toLocaleString('en-IN')}`;
-        summaryTotal.textContent = `₹ ${total.toLocaleString('en-IN')}`;
+        summarySubtotal.textContent = `â‚¹ ${subtotal.toLocaleString('en-IN')}`;
+        summaryShipping.textContent = `â‚¹ ${shipping.toLocaleString('en-IN')}`;
+        summaryGst.textContent = `â‚¹ ${gst.toLocaleString('en-IN')}`;
+        summaryTotal.textContent = `â‚¹ ${total.toLocaleString('en-IN')}`;
     }
 }
 
@@ -927,11 +934,11 @@ function renderProductDetail() {
     if (nameEl) nameEl.textContent = product.name;
 
     const priceEl = document.getElementById('product-price');
-    if (priceEl) priceEl.textContent = `₹ ${product.price.toLocaleString('en-IN')}`;
+    if (priceEl) priceEl.textContent = `â‚¹ ${product.price.toLocaleString('en-IN')}`;
 
     const original = (typeof product.originalPrice === 'number' ? product.originalPrice : product.price * 1.5);
     const originalEl = document.getElementById('product-original-price');
-    if (originalEl) originalEl.textContent = `₹ ${Math.round(original).toLocaleString('en-IN')}`;
+    if (originalEl) originalEl.textContent = `â‚¹ ${Math.round(original).toLocaleString('en-IN')}`;
 
     const discountEl = document.getElementById('product-discount');
     if (discountEl) {
